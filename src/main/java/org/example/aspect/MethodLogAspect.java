@@ -4,6 +4,9 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.example.annotation.MethodLog;
+import org.example.utils.TimeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Component;
 @Order(1)
 @Component
 public class MethodLogAspect {
+
+    private static Logger logger = LoggerFactory.getLogger(MethodLogAspect.class);
 
     @Around("@annotation(methodLog)")
     public Object aroundMethod(ProceedingJoinPoint point, MethodLog methodLog) throws Throwable {
@@ -32,12 +37,12 @@ public class MethodLogAspect {
             sb.append("]");
         }
         long start = System.currentTimeMillis();
-        System.out.println(sb.toString() + " start at: " + start);
+        logger.info(TimeUtil.getCurrentTimeStr() + "-" + sb.toString() + " method start...");
         Object result = point.proceed();
         long end = System.currentTimeMillis();
-        System.out.println(sb.toString() + " end at: " + end);
+        logger.info(TimeUtil.getCurrentTimeStr() + "-" + sb.toString() + "method end ...");
 
-        System.out.println(sb.toString() + "cost time: " + (end-start));
+        logger.info(TimeUtil.getCurrentTimeStr() + "-" + sb.toString() + "cost time: " + (end-start));
         return result;
 
     }
