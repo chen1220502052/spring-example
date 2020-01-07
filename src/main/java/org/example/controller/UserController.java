@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -23,4 +25,13 @@ public class UserController {
         return  userDao.get(id);
     }
 
+    @GetMapping("/all")
+    public List<User> getUser(){
+        return userDao.getAll();
+    }
+
+    @GetMapping("/exception")
+    public void exception(){
+            int i = 1/0;
+    }
 }
