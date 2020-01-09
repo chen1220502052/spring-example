@@ -20,7 +20,9 @@ public class AnyExceptionHandler {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, HttpServletResponse response){
         logger.error(e.getMessage());
+        logger.info("response character encoding type: {}", response.getCharacterEncoding());
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json"); // 定义response content type，防止返回乱码
         try(PrintWriter writer = response.getWriter()){
             JsonGenerator jg = new JsonFactory().createGenerator(writer);
             jg.writeStartObject();
@@ -28,7 +30,7 @@ public class AnyExceptionHandler {
             jg.writeStringField("message", "服务器内部错误");
             jg.writeEndObject();
             jg.close();
-            writer.flush();
+//            writer.flush();
         }catch (Exception ex){
             logger.error(ex.getMessage());
         }

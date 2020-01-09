@@ -2,9 +2,11 @@ package org.example.Server;
 
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.example.StartUp;
+import org.example.dao.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +14,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
 
 public class JettyServer {
     private static int HTTP_PORT = 8090;
@@ -33,12 +39,12 @@ public class JettyServer {
     private Server server = null;
 
     private WebApplicationContext webApplicationContext;
+    private DispatcherServlet dispatcherServlet;
 
     public JettyServer(){
 
     }
-
-    public void run() throws Exception{
+    public void init(){
         if(httpPort <= 0){
             httpPort = HTTP_PORT;
         }
@@ -52,23 +58,35 @@ public class JettyServer {
         if(webApplicationContext == null){
             webApplicationContext = defaultWebApplicationContext();
         }
-        logger.info("jetty server init: port="+httpPort);
         server.setHandler(servletContextHandler(webApplicationContext,
                 contextPath, mappingUrl));
+        logger.info("jetty server init: port="+httpPort + ";init handler...");
+
+    }
+    public void run() throws Exception{
         server.start();
         logger.info("jetty server start: port="+httpPort);
-        logger.info("");
-        StartUp.testAddUser(webApplicationContext);
-        server.join();
+        logger.info("servlet context: " + ((ServletContextHandler)server.getHandler()).getServletHandler().getServletContext());
+//        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+//            server.setStopAtShutdown(true);
+//        }));
+//        server.join();
     }
 
     private ServletContextHandler servletContextHandler(WebApplicationContext webApplicationContext,
                                                         String contextPath, String mappingUrl){
         ServletContextHandler servletContextHandler = new ServletContextHandler();
         servletContextHandler.setContextPath(contextPath);
-        servletContextHandler.addServlet(new ServletHolder(
-                new DispatcherServlet(webApplicationContext)), mappingUrl);
+        dispatcherServlet = new DispatcherServlet(webApplicationContext);
+        CharacterEncodingFilter setEncoding = new CharacterEncodingFilter("UTF-8");
+        EnumSet<DispatcherType> dispatcherTypes = EnumSet.allOf(DispatcherType.class);
+        ServletHolder servletHolder = new ServletHolder("dispatcherServlet", dispatcherServlet);
+        servletContextHandler.addServlet(servletHolder, mappingUrl);
+        FilterHolder filterHolder = new FilterHolder(setEncoding);
+        filterHolder.setName("setEncoding");
+        servletContextHandler.addFilter(filterHolder, "/*", dispatcherTypes);
         servletContextHandler.addEventListener(new ContextLoaderListener(webApplicationContext));
+
         return servletContextHandler;
     }
 
@@ -77,6 +95,25 @@ public class JettyServer {
         ctx.scan("org.example.**");
 //        ctx.refresh();
         return ctx;
+    }
+
+    public static void server(){
+        JettyServer server = new JettyServer();
+        try {
+            server.init();
+            server.run();
+            initUserTable(server.webApplicationContext);
+        }catch(Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+
+    public static void initUserTable(WebApplicationContext ctx){
+        UserDao userDao = (UserDao) ctx.getBean("userDao");
+        logger.info("create table success = " + userDao.createTable());
+        logger.info("insert user id = " + userDao.insert("Mark"));
+        logger.info("insert user id = " + userDao.insert("John"));
+        logger.info("insert user id = " + userDao.insert("李三"));
     }
 
 }

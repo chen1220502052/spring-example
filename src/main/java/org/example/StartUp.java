@@ -1,6 +1,8 @@
 package org.example;
 
+import org.example.Server.DiscardNettyServer;
 import org.example.Server.JettyServer;
+import org.example.Server.NettyServer;
 import org.example.dao.UserDao;
 import org.example.enntity.User;
 import org.example.service.EchoService;
@@ -16,19 +18,17 @@ public class StartUp {
     public static Logger logger = LoggerFactory.getLogger(StartUp.class);
 
     public static void main(String[] args){
-        server();
+        testNettyDiscardServer();
     }
 
-    public static void server(){
-        JettyServer server = new JettyServer();
-        try {
-            server.run();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+    public static void testJetty(){
+        JettyServer.server();
+    }
+    public static void testNettyDiscardServer(){
+        DiscardNettyServer.DiscardNettyServer();
     }
 
-    public static void test(){
+    public static void testSpring(){
         logger.info("application start....");
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
         ctx.scan("org.example.**");
@@ -48,10 +48,5 @@ public class StartUp {
         logger.info("application end...");
     }
 
-    public static void testAddUser(WebApplicationContext ctx){
-        UserDao userDao = (UserDao) ctx.getBean("userDao");
-        logger.info("create table success = " + userDao.createTable());
-        logger.info("insert user id = " + userDao.insert("Mark"));
-        logger.info("insert user id = " + userDao.insert("John"));
-    }
+
 }
