@@ -94,6 +94,7 @@ public class JettyServer {
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
         ctx.scan("org.example.**");
 //        ctx.refresh();
+        ctx.registerShutdownHook();
         return ctx;
     }
 
