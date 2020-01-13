@@ -25,10 +25,24 @@
                 <include>*.txt</include>
             </includes>
         </fileSet>
+
+        <!-- 将生成的jar包，放到根目录 -->
+        <!--
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        -->
     </fileSets>
     <dependencySets>
         <dependencySet>
+            <!-- false 生成的jar包 不包含在 lib中 -->
+            <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>lib</outputDirectory>
+            <unpack>false</unpack>
         </dependencySet>
     </dependencySets>
 </assembly>

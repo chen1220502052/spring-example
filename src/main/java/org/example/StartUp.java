@@ -18,7 +18,7 @@ public class StartUp {
     public static Logger logger = LoggerFactory.getLogger(StartUp.class);
 
     public static void main(String[] args){
-        testNettyDiscardServer();
+        testJetty();
     }
 
     public static void testJetty(){
@@ -28,25 +28,6 @@ public class StartUp {
         DiscardNettyServer.DiscardNettyServer();
     }
 
-    public static void testSpring(){
-        logger.info("application start....");
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.scan("org.example.**");
-        ctx.refresh();
-        EchoService echoService = (EchoService) ctx.getBean("echoService");
-        echoService.echo("hello word!");
-        UserDao userDao = (UserDao) ctx.getBean("userDao");
-        logger.info("create table success = " + userDao.createTable());
-        logger.info("insert user id = " + userDao.insert("Mark"));
-        logger.info("insert user id = " + userDao.insert("John"));
-
-        logger.info("user=" + userDao.get(01));
-        List<User> users = userDao.getAll();
-        if(users!= null){
-            users.forEach(user -> logger.info("user=" + user));
-        }
-        logger.info("application end...");
-    }
 
 
 }

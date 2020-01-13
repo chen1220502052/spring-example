@@ -6,6 +6,7 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.example.StartUp;
+import org.example.dao.FriendShipDao;
 import org.example.dao.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,10 +112,13 @@ public class JettyServer {
 
     public static void initUserTable(WebApplicationContext ctx){
         UserDao userDao = (UserDao) ctx.getBean("userDao");
-        logger.info("create table success = " + userDao.createTable());
+        logger.info("create table user success = " + userDao.createTable());
         logger.info("insert user id = " + userDao.insert("Mark"));
         logger.info("insert user id = " + userDao.insert("John"));
         logger.info("insert user id = " + userDao.insert("李三"));
+        FriendShipDao friendShipDao = (FriendShipDao)ctx.getBean("friendShipDao");
+        logger.info("create table friend_ship success = " + friendShipDao.createTable());
+
     }
 
 }
