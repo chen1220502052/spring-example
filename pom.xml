@@ -22,6 +22,7 @@
         <jetty.version>9.4.25.v20191220</jetty.version>
         <jackson.version>2.9.4</jackson.version>
         <netty.version>4.1.44.Final</netty.version>
+        <flume.version>1.9.0</flume.version>
     </properties>
 
     <profiles>
@@ -214,6 +215,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flume</groupId>
+            <artifactId>flume-ng-sdk</artifactId>
+            <version>${flume.version}</version>
         </dependency>
 
     </dependencies>
