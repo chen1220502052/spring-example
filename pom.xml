@@ -20,7 +20,7 @@
         <junit.version>4.13</junit.version>
         <log4j2.version>2.13.0</log4j2.version>
         <jetty.version>9.4.25.v20191220</jetty.version>
-        <jackson.version>2.9.4</jackson.version>
+        <jackson.version>2.11.1</jackson.version>
         <netty.version>4.1.44.Final</netty.version>
         <flume.version>1.9.0</flume.version>
     </properties>
